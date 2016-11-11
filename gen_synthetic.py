@@ -7,8 +7,9 @@ def gen_linear_synthetic(N, D, sigma):
 
     Its basic idea comes from the linear combination of 
         'x_0 * w0 + x_1 * w_1 + ... + x_D * w_D'
-    Then, add one systematic error 'e' to this linear combination to 
-    express observed data:
+    where 'D' is the dimension of the inputting data. Then, add one 
+    systematic error 'e' to this linear combination to express observed 
+    data:
         '(x_0 * w0 + x_1 * w_1 + ... + x_D * w_D) + e'
     
     This is the process of just one data point generation. Our goal is 
@@ -21,7 +22,7 @@ def gen_linear_synthetic(N, D, sigma):
     (N, 1).
 
 
-    The more detailed process is:
+    The detailed specifications of this process are:
 
     - First, it'll generate a numpy array dataset 'X' of shape (N, D), in 
       which the elements governed by normal distribution N(0, 1).
@@ -29,17 +30,20 @@ def gen_linear_synthetic(N, D, sigma):
     - Then, it'll generate a weights numpy array 'W' of shape (D, 1), which 
       is governed by uniform distribution U(-0.5, 0.5).
 
-    - Finally, X's corresponding class dataset 'Y' of shape(N, 1), will be
+    - Finally, X's corresponding class dataset 'Y' of shape(N, 1) will be
       generated. It's computed through scores, which is the multiplication 
-      of X and W, plus a system error, which is governed by distribution 
+      of X and W, plus a systematic error, which is governed by distribution 
       N(0, sigma). Then, based on the fact that if element of scores is less 
       than 0, the corresponding Y element will be assigned with -1 or 1.
 
+    
     Inputs:
-    - N    : The number of rows of the generated numpy array 'X'.
-    - D    : The number of columns of the generated numpy array 'X'.
+    - N    : The number of generated data points. Number of rows of the
+             numpy array 'X'.
+    - D    : The dimension of generated data point. Number of columns of
+             the numpy array 'X'.
     - sigma: The standard deviation of normal distribution, which
-             governs the distribution of system error adding to the 
+             governs the distribution of systematic error added to the 
              multiplication of X and W.
 
     Returns a list of:
