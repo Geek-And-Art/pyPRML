@@ -67,3 +67,54 @@ def gen_linear_synthetic(N, D, sigma):
     print "Y has been generated."
     
     return X, Y
+
+def gen_naive_bayes_synthetic(X_domains, y_domains, N, hard_code=False):
+    """
+    Return numpy array with its element in the form [('X'), ('y')]. 
+    Each element's attribute will be generated randomly from its domain.
+
+
+    Inputs:
+    - X_domains : A numpy array, in which the element represents one
+                  inputting data's attribute's domain set.  
+    - y_domains : A numpy array, in which the element represents one
+                  label's attrubute's domain set.
+    - N         : The number of data to be generated.
+    - hard_code : If it's true, it'll return the embedded hard code data.
+
+
+    Outputs:
+    This method will return a numpy array. Each element is constituded
+    with observed data 'X' and its label 'y' tuple, i.e. [('X'), ('y')].
+
+    Let's use the embedded hard code data as example.
+
+    'X' contains two attribute 'x1, x2', , i.e. X = ('x1', 'x2'). 
+    And their value ranges are {1, 2, 3} and {S, L, M} separately.
+
+    The value range of 'y' is {-1, 1}.
+
+    In summary, the return numpy array's element is [('x1', 'x2'), ('y1',)],
+    whose value ranges are {1, 2, 3}, {S, L, M} and {-1, 1} separately.
+    """
+    if hard_code:
+        x1 = np.array([1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3])
+        x2 = np.array(list("SMMSSSMMLLLMMLL"))
+        y = np.array([-1, -1, 1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1])
+        assert(len(x1) == len(x2) and len(x2) == len(y))
+
+        return np.array(zip(zip(x1, x2), zip(y)))
+
+    res = []
+    for i in xrange(N):
+        x_field = []
+        y_field = []
+        for xAttr in X_domains:
+            x_field.append(np.random.choice(xAttr, 1)[0])
+
+        for yAttr in y_domains:
+            y_field.append(np.random.choice(yAttr, 1)[0])
+
+        res.append([tuple(x_field), tuple(y_field)])
+
+    return np.array(res)
