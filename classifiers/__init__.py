@@ -1,1 +1,2 @@
-from classifiers.knn_classifier import *
+from classifiers.knn import *
+from classifiers.naiveBayes import *
