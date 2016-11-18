@@ -98,12 +98,12 @@ def gen_naive_bayes_synthetic(X_domains, y_domains, N, hard_code=False):
     whose value ranges are {1, 2, 3}, {S, L, M} and {-1, 1} separately.
     """
     if hard_code:
-        x1 = np.array([1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3])
+        x1 = np.array([1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3], dtype=str)
         x2 = np.array(list("SMMSSSMMLLLMMLL"))
-        y = np.array([-1, -1, 1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1])
+        y = np.array([-1, -1, 1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1], dtype=str)
         assert(len(x1) == len(x2) and len(x2) == len(y))
 
-        return np.array(zip(zip(x1, x2), zip(y)))
+        return np.array(zip(zip(x1, x2), y))
 
     res = []
     for i in xrange(N):
@@ -115,6 +115,9 @@ def gen_naive_bayes_synthetic(X_domains, y_domains, N, hard_code=False):
         for yAttr in y_domains:
             y_field.append(np.random.choice(yAttr, 1)[0])
 
-        res.append([tuple(x_field), tuple(y_field)])
+        if len(y_field) == 1:
+            y_field = y_field[0]
+
+        res.append([tuple(x_field), y_field])
 
     return np.array(res)
