@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 class NaiveBayes(object):
 	"""
@@ -38,6 +39,22 @@ class NaiveBayes(object):
 		self.prob_table = None
 
 	def train(self, x_domains, y_domains, X):
+		
+		pass
+
+	def predict(self):
+		"""
+		Compute the probability based on the probability table. And
+		choose the label with largest probability as its prediction.
+
+		"""
+		pass
+
+	def loss(self):
+		pass
+
+class MultinomialNB(NaiveBayes):
+	def train(self, x_domains, y_domains, X):
 		"""
 		This method accepts data in form [('X'), ('y')], where 'X'
 		and 'y' may contain multiple attributes.
@@ -51,15 +68,15 @@ class NaiveBayes(object):
         self : object
             Returns self.
 		"""
+		X_pd = []
+		for r in X:
+			flat_row = list(r[0])
+			flat_row.append(r[1])
+			X_pd.append(flat_row)
 
-		return self
+		self.prob_table = pd.DataFrame(X_pd)
 
-	def predict(self):
-		"""
-		Compute the probability based on the probability table. And
-		choose the label with largest probability as its prediction.
-
-		"""
-
-	def loss(self):
+		# df = self.prob_table
+		# print df
+		# print df[df[0] == '1']
 
