@@ -118,6 +118,6 @@ def gen_naive_bayes_synthetic(X_domains, y_domains, N, hard_code=False):
         if len(y_field) == 1:
             y_field = y_field[0]
 
-        res.append([tuple(x_field), y_field])
+        res.append([tuple(x_field), str(y_field)])
 
     return np.array(res)
