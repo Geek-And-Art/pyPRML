@@ -90,4 +90,23 @@ class MultinomialNB(NaiveBayes):
 					for xVal in xDom:
 						self.prob_table[xVal + '|' + yVal] = (len(df[(df[i] == xVal) & (df[len(x_domains)] == yVal)]) + 0.0) / len(df[df[len(x_domains)] == yVal])
 
+
+	def predict(self, X):
+		assert(len(X) == len(self.x_domains))
+
+		y_pred = np.ones_like(self.y_domains, dtype=float)
+
+		for j, yDom in enumerate(self.y_domains):
+			for i, yVal in enumerate(yDom):
+				y_pred[j][i] = self.prob_table[yVal]
+
+				for xVal in X:
+					query_str = xVal + '|' + yVal
+					y_pred[j][i] = y_pred[j][i] * self.prob_table[query_str]
+
+		res = []
+		for i, y in enumerate(y_pred):
+			res.append(self.y_domains[i][np.argmax(y)])
+
+		print res
 		
