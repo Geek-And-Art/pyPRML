@@ -44,11 +44,6 @@ class NaiveBayes(object):
 		pass
 
 	def predict(self):
-		"""
-		Compute the probability based on the probability table. And
-		choose the label with largest probability as its prediction.
-
-		"""
 		pass
 
 	def loss(self):
@@ -56,7 +51,7 @@ class NaiveBayes(object):
 
 class MultinomialNB(NaiveBayes):
 
-	def train(self, x_domains, y_domains, dataPkg):
+	def train(self, x_domains, y_domains, dataPkg, laplaceS=0.0):
 		"""
 		This method accepts data in form [('X'), ('y')], where 'X'
 		and 'y' may contain multiple attributes.
@@ -84,11 +79,15 @@ class MultinomialNB(NaiveBayes):
 
 		for yDom in y_domains:
 			for yVal in yDom:
-				self.prob_table[yVal] = len(df[df[len(x_domains)] == yVal]) / (len(df) + 0.0)
+				yValCounts = len(df[df[len(x_domains)] == yVal])
+				dfCounts = len(df)
+				self.prob_table[yVal] = (yValCounts + 0.0) / dfCounts
 
 				for i, xDom in enumerate(x_domains):
 					for xVal in xDom:
-						self.prob_table[xVal + '|' + yVal] = (len(df[(df[i] == xVal) & (df[len(x_domains)] == yVal)]) + 0.0) / len(df[df[len(x_domains)] == yVal])
+						xyValCounts = len(df[(df[i] == xVal) & (df[len(x_domains)] == yVal)])
+						xFeatureCounts = len(xDom)
+						self.prob_table[xVal + '|' + yVal] = (xyValCounts + laplaceS + 0.0) / (yValCounts + laplaceS * xFeatureCounts)
 
 
 	def predict(self, X):
@@ -102,7 +101,9 @@ class MultinomialNB(NaiveBayes):
 
 				for xVal in X:
 					query_str = xVal + '|' + yVal
-					y_pred[j][i] = y_pred[j][i] * self.prob_table[query_str]
+
+					# Base on naive bayes assumption.
+					y_pred[j][i] *= self.prob_table[query_str]
 
 		res = []
 		for i, y in enumerate(y_pred):
