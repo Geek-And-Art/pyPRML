@@ -36,7 +36,8 @@ class NaiveBayes(object):
 	"""
 
 	def __init__(self):
-		self.prob_table = None
+		self.counts_table = None
+		self.prob_table = {}
 
 	def train(self, x_domains, y_domains, X):
 		
@@ -54,7 +55,8 @@ class NaiveBayes(object):
 		pass
 
 class MultinomialNB(NaiveBayes):
-	def train(self, x_domains, y_domains, X):
+
+	def train(self, x_domains, y_domains, dataPkg):
 		"""
 		This method accepts data in form [('X'), ('y')], where 'X'
 		and 'y' may contain multiple attributes.
@@ -68,15 +70,24 @@ class MultinomialNB(NaiveBayes):
         self : object
             Returns self.
 		"""
+		self.x_domains = x_domains
+		self.y_domains = y_domains
+
 		X_pd = []
-		for r in X:
+		for r in dataPkg:
 			flat_row = list(r[0])
 			flat_row.append(r[1])
 			X_pd.append(flat_row)
 
-		self.prob_table = pd.DataFrame(X_pd)
+		self.counts_table = pd.DataFrame(X_pd)
+		df = self.counts_table
 
-		# df = self.prob_table
-		# print df
-		# print df[df[0] == '1']
+		for yDom in y_domains:
+			for yVal in yDom:
+				self.prob_table[yVal] = len(df[df[len(x_domains)] == yVal]) / (len(df) + 0.0)
 
+				for i, xDom in enumerate(x_domains):
+					for xVal in xDom:
+						self.prob_table[xVal + '|' + yVal] = (len(df[(df[i] == xVal) & (df[len(x_domains)] == yVal)]) + 0.0) / len(df[df[len(x_domains)] == yVal])
+
+		
