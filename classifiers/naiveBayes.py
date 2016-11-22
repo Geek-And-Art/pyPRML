@@ -59,11 +59,9 @@ class MultinomialNB(NaiveBayes):
 		The purpose of this method is to construct the probability
 		table for each combination of 'X' and 'y'.
 
-
-		Returns
-        -------
-        self : object
-            Returns self.
+		The probability table is a dictionary. It stores in two forms:
+		- self.prob_table['y'] = the ratio of value 'y' among whole data
+		- self.prob_table['x|y'] = the conditional probability 'x|y'
 		"""
 		self.x_domains = x_domains
 		self.y_domains = y_domains
