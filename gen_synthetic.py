@@ -96,6 +96,12 @@ def gen_naive_bayes_synthetic(X_domains, y_domains, N, hard_code=False):
 
     In summary, the return numpy array's element is [('x1', 'x2'), ('y1',)],
     whose value ranges are {1, 2, 3}, {S, L, M} and {-1, 1} separately.
+
+    Notes:
+    ------
+    In order to make the data type consistent, the data type in both X and y
+    will be string type. Because even the number, it's used as one simple to
+    indicate different class, which is equivalent to a string.
     """
     if hard_code:
         x1 = np.array([1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3], dtype=str)
