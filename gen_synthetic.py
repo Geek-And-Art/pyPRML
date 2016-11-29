@@ -70,7 +70,7 @@ def gen_linear_synthetic(N, D, sigma):
 
 def gen_naive_bayes_synthetic(X_domains, y_domains, N, hard_code=False):
     """
-    Return numpy array with its element in the form [('X'), ('y')]. 
+    Return an object which contains attributes: 'data', 'target'.
     Each element's attribute will be generated randomly from its domain.
 
 
@@ -84,7 +84,7 @@ def gen_naive_bayes_synthetic(X_domains, y_domains, N, hard_code=False):
 
 
     Outputs:
-    This method will return a numpy array. Each element is constituded
+    This method will return an object. Each element is constituded
     with observed data 'X' and its label 'y' tuple, i.e. [('X'), ('y')].
 
     Let's use the embedded hard code data as example.
@@ -103,27 +103,41 @@ def gen_naive_bayes_synthetic(X_domains, y_domains, N, hard_code=False):
     will be string type. Because even the number, it's used as one simple to
     indicate different class, which is equivalent to a string.
     """
+    res = {}
+
     if hard_code:
-        x1 = np.array([1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3], dtype=str)
-        x2 = np.array(list("SMMSSSMMLLLMMLL"))
-        y = np.array([-1, -1, 1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1], dtype=str)
+        x1 = [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3]
+        x2 = list("SMMSSSMMLLLMMLL")
+        y = [-1, -1, 1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1]
         assert(len(x1) == len(x2) and len(x2) == len(y))
 
-        return np.array(zip(zip(x1, x2), y))
+        num_train = len(x1)
+        X = []
+        for indx in xrange(num_train):
+            X_field = []
+            X_field.append(x1[indx])
+            X_field.append(x2[indx])
+            X.append(X_field)
 
-    res = []
-    for i in xrange(N):
-        x_field = []
-        y_field = []
+        res['data'] = X
+        res['target'] = y
+        return res
+
+    # Random generation
+    num_train = N
+    num_attrs = len(X_domains)
+    X = [] # np.zeros((num_train, num_attrs))
+    y = [] # np.zeros(num_train)
+
+    for indx in xrange(num_train):
+        X_field = []
         for xAttr in X_domains:
-            x_field.append(np.random.choice(xAttr, 1)[0])
+            X_field.append(np.random.choice(xAttr, 1)[0])
+        X.append(X_field)
 
-        for yAttr in y_domains:
-            y_field.append(np.random.choice(yAttr, 1)[0])
+        y.append(np.random.choice(y_domains, 1)[0])
 
-        if len(y_field) == 1:
-            y_field = y_field[0]
+    res['data'] = X
+    res['target'] = y
 
-        res.append([tuple(x_field), str(y_field)])
-
-    return np.array(res)
+    return res
