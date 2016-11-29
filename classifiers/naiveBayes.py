@@ -39,11 +39,10 @@ class NaiveBayes(object):
 		self.counts_table = None
 		self.prob_table = {}
 
-	def train(self, x_domains, y_domains, X):
-		
+	def train(self, X, y):
 		pass
 
-	def predict(self):
+	def predict(self, X):
 		pass
 
 	def loss(self):
@@ -51,61 +50,45 @@ class NaiveBayes(object):
 
 class MultinomialNB(NaiveBayes):
 
-	def train(self, x_domains, y_domains, dataPkg, laplaceS=0.0):
+	def train(self, X, y, laplaceS=0.0):
 		"""
-		This method accepts data in form [('X'), ('y')], where 'X'
-		and 'y' may contain multiple attributes.
-
-		The purpose of this method is to construct the probability
-		table for each combination of 'X' and 'y'.
-
-		The probability table is a dictionary. It stores in two forms:
-		- self.prob_table['y'] = the ratio of value 'y' among whole data
-		- self.prob_table['x|y'] = the conditional probability 'x|y'
+		Input
+		-----
+		- X: the observed data
+		- y: the target data corresponding to y
 		"""
-		self.x_domains = x_domains
-		self.y_domains = y_domains
+		num_train, num_attrs = X.shape
+		self.classes = np.unique(y)
 
-		X_pd = []
-		for r in dataPkg:
-			flat_row = list(r[0])
-			flat_row.append(r[1])
-			X_pd.append(flat_row)
-
-		self.counts_table = pd.DataFrame(X_pd)
+		self.counts_table = pd.DataFrame(X)
+		self.counts_table[num_attrs] = y
 		df = self.counts_table
 
-		for yDom in y_domains:
-			for yVal in yDom:
-				yValCounts = len(df[df[len(x_domains)] == yVal])
-				dfCounts = len(df)
-				self.prob_table[yVal] = (yValCounts + 0.0) / dfCounts
+		for yVal in y:
+			yValCounts = len(df[ df[num_attrs] == yVal ])
+			self.prob_table[str(yVal)] = (yValCounts + 0.0) / num_train
 
-				for i, xDom in enumerate(x_domains):
-					for xVal in xDom:
-						xyValCounts = len(df[(df[i] == xVal) & (df[len(x_domains)] == yVal)])
-						xFeatureCounts = len(xDom)
-						self.prob_table[xVal + '|' + yVal] = (xyValCounts + laplaceS + 0.0) / (yValCounts + laplaceS * xFeatureCounts)
-
+			for X_field in X:
+				for X_attr_indx, X_attr in enumerate(X_field):
+					k_Xy = str(X_attr) + '|' + str(yVal)
+					if not k_Xy in self.prob_table:
+						Xy_counts = len(df[ (df[X_attr_indx] == X_attr) & (df[num_attrs] == yVal) ])
+						self.prob_table[k_Xy] = (Xy_counts + laplaceS + 0.0) / (yValCounts + laplaceS * num_attrs)
+						
 
 	def predict(self, X):
-		assert(len(X) == len(self.x_domains))
 
-		y_pred = np.ones_like(self.y_domains, dtype=float)
+		num_train, num_attrs = self.counts_table.shape
+		num_attrs -= 1
+		classes = self.classes
+		
+		for yVal in classes:
+			y_pred = self.prob_table[str(yVal)]
 
-		for j, yDom in enumerate(self.y_domains):
-			for i, yVal in enumerate(yDom):
-				y_pred[j][i] = self.prob_table[yVal]
+			for xVal in X:
+				query_str = str(xVal) + '|' + str(yVal)
+				y_pred *= self.prob_table[query_str]
 
-				for xVal in X:
-					query_str = xVal + '|' + yVal
-
-					# Base on naive bayes assumption.
-					y_pred[j][i] *= self.prob_table[query_str]
-
-		res = []
-		for i, y in enumerate(y_pred):
-			res.append(self.y_domains[i][np.argmax(y)])
-
+		res = classes[np.argmax(yVal)]
 		print res
 		
