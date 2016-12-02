@@ -68,6 +68,22 @@ def gen_linear_synthetic(N, D, sigma):
     
     return X, Y
 
+def gen_sine_synthetic(N, sigma):
+    """
+    Generate synthetic sine function model data based on PRML appendix A.
+
+    Return a set of {x_i, t_i}:
+    - x_i: generated from uniform distribution U[0, 1]
+    - t_i: generated from sin(2 * pi * x_i) + e,
+           where e comes from N(0, sigma)
+    """
+    x = np.random.uniform(size=(N, 1))
+    err_sys = np.random.normal(loc=0, scale=sigma, size=(N, 1))
+    t = np.sin(2 * np.pi * x) + err_sys
+    return x, t
+
+
+
 def gen_naive_bayes_synthetic(X_domains, y_domains, N, hard_code=False):
     """
     Return an object which contains attributes: 'data', 'target'.
