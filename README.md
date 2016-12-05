@@ -10,6 +10,7 @@ The official webpage of this pyPRML can be found [here](https://geek-and-art.git
 
 As the dataset is too large, it won't be uploaded to repository. Here, we only show the directory structure:
 
+<pre>
 dataset
     - hw1_dataset_nb
 	  - test
@@ -19,4 +20,5 @@ dataset
 	    - neg
 		- pos
 	  - sw.txt
+</pre>
 
